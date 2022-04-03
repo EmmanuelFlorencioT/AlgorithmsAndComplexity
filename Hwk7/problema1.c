@@ -222,7 +222,7 @@ int minimum(int indexRow, int indexCol, int W[SZ][SZ],int D[SZ][SZ], int *jMin){
         tempMin = W[indexRow][A[indexCol].set[j]] + D[A[indexCol].set[j]][findAminusVj(A[indexCol].set[j], A[indexCol].currSize, indexCol)];
         if((tempMin) < currMin){
             currMin = tempMin;
-            *jMin = j;
+            *jMin = A[indexCol].set[j];
         }
     }
     return currMin;
