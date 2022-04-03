@@ -35,7 +35,8 @@ void combinationUtil(int arr[], int n, int r, int index, int data[], int i, int 
 int checkSet(int value, int indexCol);
 int findAminusVj(int node, int sizeA, int indexCol);
 int minimum(int indexRow, int indexCol, int W[SZ][SZ],int D[SZ][SZ], int *jMin);
-void problema1(int n, int W[SZ][SZ], int P[SZ][SZ], int *minlength);
+void shortestHamCirc(int n, int W[SZ][SZ], int P[SZ][SZ], int *minlength);
+void problema2(int n, int P[SZ][SZ]);
 
 int main(){
     int n = 5, g[SZ][SZ], resP[SZ][SZ], resMinLen;
@@ -48,9 +49,13 @@ int main(){
     // printf("[CHANGE LINE]\n");
     createA(n);
     printA(A, n);
-    problema1(n, g, resP, &resMinLen);
+    shortestHamCirc(n, g, resP, &resMinLen);
+    printf("\nP:\n");
+    printMat(resP, n, (int)pow(2, n-1));
     printf("\n");
     printf("Optimal tour length is: %d", resMinLen);
+    printf("\n");
+    problema2(n, resP);
 }
 
 //Crea un grafo al azar
@@ -196,7 +201,7 @@ void createA(int n){
     }
 }
 
-//Revisa si se hará un calculo dentro de "problema1()"
+//Revisa si se hará un calculo dentro de "shortestHamCirc()"
 int checkSet(int value, int indexCol){
     int i, flag = 0; //Bandera para revisar si encontró el elemento
     for(i = 0; i < A[indexCol].currSize; i++)
@@ -252,7 +257,7 @@ int minimum(int indexRow, int indexCol, int W[SZ][SZ],int D[SZ][SZ], int *jMin){
     return currMin;
 }
 
-void problema1(int n, int W[SZ][SZ], int P[SZ][SZ], int *minlength){
+void shortestHamCirc(int n, int W[SZ][SZ], int P[SZ][SZ], int *minlength){
     int i, j, k, jMin; //Valor de j que dio el minimo en "minimum()"
     int nColsD = (int)pow(2, n-1);
     int D[SZ][SZ];
@@ -260,7 +265,7 @@ void problema1(int n, int W[SZ][SZ], int P[SZ][SZ], int *minlength){
     //Inicialización de la matriz D
     for(i = 0; i < n; i++)
         for(j = 0; j < nColsD; j++)
-            D[i][j] = 0;
+            D[i][j] = P[i][j] = -1;
 
     //Inicialización de la primera columna
     for(i = 1; i < n; i++){
@@ -284,6 +289,22 @@ void problema1(int n, int W[SZ][SZ], int P[SZ][SZ], int *minlength){
     /*-----------------------------*/
 }
 
+void problema2(int n, int P[SZ][SZ]){
+    int nColsP = (int)pow(2, n-1);
+    int nextNode; //Siguiente nodo a recorrer en P[nextNode][]
+    int idxA = nColsP - 1; //Indice dentro de A[]
+    int nextIdxA; //Siguiente indice dentro de A[]
+
+    printf("Shortest circuit: [0, ");
+    nextNode = P[0][idxA];
+    while(A[idxA].currSize > 0){
+        printf("%d, ", nextNode);
+        nextIdxA = findAminusVj(nextNode, A[idxA].currSize, idxA);
+        nextNode = P[nextNode][nextIdxA];
+        idxA = nextIdxA;
+    }
+    printf("0]\n");
+}
 
 /*Funciones auxiliares para prueba*/
 void printArr(int arr[], int n){
